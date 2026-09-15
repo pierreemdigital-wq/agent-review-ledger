@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agent-review-ledger"
+version = "0.1.0"
+description = "Local-first control plane for evidence-backed, human-reviewed AI work"
+readme = "README.md"
+requires-python = ">=3.9"
+license = "Apache-2.0"
+authors = [{name = "Pierre Drouhard"}]
+keywords = ["ai-agents", "human-in-the-loop", "audit-log", "evaluation", "sqlite"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Topic :: Software Development :: Quality Assurance",
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/pierreemdigital-wq/agent-review-ledger"
+Issues = "https://github.com/pierreemdigital-wq/agent-review-ledger/issues"
+
+[project.scripts]
+arl = "agent_review_ledger.cli:main"
+
+[tool.setuptools.package-data]
+agent_review_ledger = ["static/*.html", "static/*.js", "static/*.css"]
