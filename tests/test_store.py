@@ -1,3 +1,4 @@
+from contextlib import closing
 import json
 from pathlib import Path
 import sqlite3
@@ -66,8 +67,9 @@ class StoreTests(unittest.TestCase):
 
     def test_ledger_rolls_back_when_event_write_fails(self):
         task = self.create(10)
-        with sqlite3.connect(self.path) as db:
-            db.execute("CREATE TRIGGER fail_event BEFORE INSERT ON events BEGIN SELECT RAISE(ABORT, 'synthetic failure'); END")
+        with closing(sqlite3.connect(self.path)) as db:
+            with db:
+                db.execute("CREATE TRIGGER fail_event BEFORE INSERT ON events BEGIN SELECT RAISE(ABORT, 'synthetic failure'); END")
         before = self.store.list_tasks()
         with self.assertRaises(sqlite3.IntegrityError):
             self.store.add_cost(task["id"], 1)
@@ -83,8 +85,9 @@ class StoreTests(unittest.TestCase):
         self.assertEqual(summary["remaining_cents"], 90)
 
     def test_unknown_schema_is_rejected(self):
-        with sqlite3.connect(self.path) as db:
-            db.execute("UPDATE metadata SET value = '999' WHERE key = 'schema_version'")
+        with closing(sqlite3.connect(self.path)) as db:
+            with db:
+                db.execute("UPDATE metadata SET value = '999' WHERE key = 'schema_version'")
         with self.assertRaisesRegex(RuntimeError, "unsupported schema"):
             Store(self.path)
 
